@@ -20,9 +20,9 @@
         <canvas id="webgl_canvas"></canvas>
     </div>
     <script>
-        var threeMain=new InitThree($("#webgl_canvas")[0],550,400,45,1,1000,false);
+        var threeMain=new InitThree($("#webgl_canvas")[0],550,400,45,0.1,1000,false);
         threeMain.main_camera.position.set(0,0,5);
-        threeMain.main_camera.lookAt(0,0,0);
+        threeMain.main_camera.lookAt(new THREE.Vector3(0,0,0));
 
         var triGeo=new THREE.Geometry();
         triGeo.vertices=[new THREE.Vector3(0,-1,0),new THREE.Vector3(-2,-1,0),new THREE.Vector3(-2,1,0)];
@@ -31,7 +31,6 @@
         threeMain.main_scene.add(triMesh);
 
         threeMain.render();
-
 
     </script>
 

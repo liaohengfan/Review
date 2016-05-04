@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <!--<meta charset="UTF-8">-->
+    <!--<meta charset="GB2312">-->
+    <title>TextGeometry Learn</title>
+    <script src="src/tools/liaohengfan/InitThree.js"></script>
+    <script src="src/tools/libs/three.js"></script>
+    <script src="src/tools/libs/jquery1.42.min.js"></script>
+
+    <style>
+        body{
+            padding: 0px;margin: 0px;
+            overflow-x: hidden;overflow-y: hidden;overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+    <div id="webgl_div">
+        <canvas id="webgl_canvas"></canvas>
+    </div>
+
+    <script>
+        (function(){
+            var three=new InitThree($("#webgl_canvas")[0],1280,720,45,0.1,1000,true);
+            three.main_camera.position.set(0,5,20);
+            three.main_camera.lookAt(new THREE.Vector3(0,0,0));
+
+            var txtLoader_=new THREE.FontLoader();
+            var txt_;
+            txtLoader_.load('fonts/STXingkai_Regular.js',function(font_){
+                var txtGeo_=new THREE.TextGeometry("ÖÐÎÄ×ÖÌå",{
+                    size:3,height:.5,font:font_
+                });
+                txtGeo_.center();
+                var material_=new THREE.MeshLambertMaterial({color:0xFF0000});
+                txt_=new THREE.Mesh(txtGeo_,material_);
+                three.main_scene.add(txt_);
+
+                three.render();
+
+            });
+
+            var light_=new THREE.SpotLight(0xFFFFFF,12,1000,45);
+            light_.position.set(-3,4,10);
+            three.main_scene.add(light_);
+
+
+
+
+            var enterFrame=function(){
+                txt_.rotation.y+=.01;
+            }
+
+            three.enterframe=enterFrame;
+
+
+
+
+
+
+        })();
+    </script>
+
+
+</body>
+</html>
