@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>材质贴图</title>
+    <script src="src/tools/liaohengfan/InitThree.js"></script>
+    <script src="src/tools/libs/three.js"></script>
+    <script src="src/tools/libs/jquery1.42.min.js"></script>
+
+    <style>
+        body{
+            padding: 0px;margin: 0px;
+            overflow-x: hidden;overflow-y: hidden;overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+    <div id="webgl_div">
+        <canvas id="webgl_canvas"></canvas>
+    </div>
+
+    <script>
+        (function() {
+
+            var three = new InitThree($("#webgl_canvas")[0], 1280, 720, 45, .1, 1000, true);
+            three.main_camera.position.set(3, 5, 5);
+            three.main_camera.lookAt(new THREE.Vector3(3, 0, 0));
+
+            //灯光
+            var light_=new THREE.PointLight(0xFFFFFF,1,1000,.1);
+            light_.position.set(5,5,3);
+            three.main_scene.add(light_);
+
+            //材质
+            var texture_=THREE.ImageUtils.loadTexture('assest/texture/z6.png');
+            var lambertMaterial_=new THREE.MeshLambertMaterial({
+               map:texture_
+            });
+
+            var cubeGeo_=new THREE.CubeGeometry(1,1,1);
+            var cube_=new THREE.Mesh(cubeGeo_,lambertMaterial_);
+            three.main_scene.add(cube_);
+
+
+            //面贴图
+            var materials_=[];
+            for(var i=1;i<=6;i++){
+                materials_.push(new THREE.MeshBasicMaterial({
+                            map:THREE.ImageUtils.loadTexture('assest/texture/z'+i+'.png')
+                        })
+                )
+            }
+
+            var faceCube_=new THREE.Mesh(cubeGeo_,new THREE.MeshFaceMaterial(materials_));
+            faceCube_.position.set(2,0,0);
+            three.main_scene.add(faceCube_);
+
+
+            //重复
+            var repeatTexture_=THREE.ImageUtils.loadTexture('assest/texture/z5.png');
+            repeatTexture_.wrapS=repeatTexture_.wrapT=THREE.RepeatWrapping;
+            repeatTexture_.repeat.set(4);
+            var repeatMaterial_=new THREE.MeshLambertMaterial({map:repeatTexture_});
+            var repeatCube_=new THREE.Mesh(new THREE.CubeGeometry(1,1,1),repeatMaterial_);
+            repeatCube_.position.set(4,0,0);
+            three.main_scene.add(repeatCube_);
+
+
+            var enterFrame_=function(){
+                cube_.rotation.x+=.01;
+                cube_.rotation.y+=.01;
+
+                faceCube_.rotation.x+=.01;
+                faceCube_.rotation.y+=.01;
+
+                repeatCube_.rotation.x+=.01;
+                repeatCube_.rotation.y+=.01;
+
+            }
+            three.enterframe=enterFrame_;
+
+            three.render();
+
+
+        })();
+    </script>
+
+</body>
+</html>
