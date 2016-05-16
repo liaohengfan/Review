@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>加载模型- Obj格式</title>
+    <script src="src/tools/liaohengfan/InitThree.js"></script>
+    <script src="src/tools/libs/three.js"></script>
+    <script src="src/tools/libs/jquery1.42.min.js"></script>
+    <script src="js/loaders/OBJLoader.js"></script>
+    <script src="js/loaders/MTLLoader.js"></script>
+    <script src="js/controls/OrbitControls.js"></script>
+
+    <style>
+        body{            padding: 0px;margin: 0px;            overflow-x: hidden;overflow-y: hidden;overflow: hidden;        }
+        #controls_div{            position: absolute; top: 0px; width: 100%;height:100%;        }
+    </style>
+</head>
+<body>
+<div id="controls_div"></div>
+<div id="webgl_div">
+    <canvas id="webgl_canvas"></canvas>
+</div>
+
+<script>
+    (function() {
+
+        var three = new InitThree($("#webgl_canvas")[0], 1280, 720, 45, .1, 1000, true);
+        three.main_camera.position.set(0, 30, 10);
+        three.main_camera.lookAt(new THREE.Vector3(0, 0, 0));
+
+        var ambient_ = new THREE.AmbientLight( 0xFFFFFF,2 );
+        three.main_scene.add( ambient_ );
+
+        var controls_=new THREE.OrbitControls(three.main_camera,$("#controls_div")[0]);
+
+        var mtlLoader = new THREE.MTLLoader();
+        mtlLoader.setBaseUrl( 'assest/models/City_Luoyang/' );
+        mtlLoader.setPath( 'assest/models/City_Luoyang/' );
+        mtlLoader.load( 'City.mtl', function( materials ) {
+
+            materials.preload();
+
+            var objLoader = new THREE.OBJLoader();
+            objLoader.setMaterials( materials );
+            objLoader.setPath( 'assest/models/City_Luoyang/' );
+            objLoader.load( 'City.obj', function ( obj ) {
+                three.main_scene.add(obj);
+            });
+        });
+
+        window.addEventListener( 'resize', onWindowResize, false );
+        function onWindowResize() {
+
+            three.main_camera.aspect = window.innerWidth / window.innerHeight;
+            three.main_camera.updateProjectionMatrix();
+
+            three.main_renderer.setSize( window.innerWidth, window.innerHeight );
+            $("#controls_div")[0].style.width=window.innerWidth;
+            $("#controls_div")[0].style.height=window.innerHeight;
+        }
+        onWindowResize();
+        three.render();
+
+
+    })();
+</script>
+
+</body>
+</html>

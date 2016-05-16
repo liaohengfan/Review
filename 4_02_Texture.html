@@ -31,15 +31,23 @@
             light_.position.set(5,5,3);
             three.main_scene.add(light_);
 
-            //材质
-            var texture_=THREE.ImageUtils.loadTexture('assest/texture/z6.png');
-            var lambertMaterial_=new THREE.MeshLambertMaterial({
-               map:texture_
-            });
 
             var cubeGeo_=new THREE.CubeGeometry(1,1,1);
-            var cube_=new THREE.Mesh(cubeGeo_,lambertMaterial_);
-            three.main_scene.add(cube_);
+
+            //材质
+            var cube_;
+            var textureload=new THREE.TextureLoader();
+            textureload.load('assest/texture/z6.png',function(texture_){
+                var lambertMaterial_=new THREE.MeshLambertMaterial({
+                    map:texture_
+                });
+
+
+                cube_=new THREE.Mesh(cubeGeo_,lambertMaterial_);
+                three.main_scene.add(cube_);
+            });
+
+
 
 
             //面贴图
@@ -57,24 +65,33 @@
 
 
             //重复
-            var repeatTexture_=THREE.ImageUtils.loadTexture('assest/texture/z5.png');
-            repeatTexture_.wrapS=repeatTexture_.wrapT=THREE.RepeatWrapping;
-            repeatTexture_.repeat.set(4);
-            var repeatMaterial_=new THREE.MeshLambertMaterial({map:repeatTexture_});
-            var repeatCube_=new THREE.Mesh(new THREE.CubeGeometry(1,1,1),repeatMaterial_);
-            repeatCube_.position.set(4,0,0);
-            three.main_scene.add(repeatCube_);
+            var repeatCube_;
+            var repeattextureload=new THREE.TextureLoader();
+            repeattextureload.load('assest/texture/z5.png',function(repeatTexture_){
+                repeatTexture_.wrapS=repeatTexture_.wrapT=THREE.RepeatWrapping;
+                repeatTexture_.repeat.set(4);
+                var repeatMaterial_=new THREE.MeshLambertMaterial({
+                    map:repeatTexture_
+                });
 
+                repeatCube_=new THREE.Mesh(new THREE.CubeGeometry(1,1,1),repeatMaterial_);
+                repeatCube_.position.set(4,0,0);
+                three.main_scene.add(repeatCube_);
+            });
 
             var enterFrame_=function(){
-                cube_.rotation.x+=.01;
-                cube_.rotation.y+=.01;
-
-                faceCube_.rotation.x+=.01;
-                faceCube_.rotation.y+=.01;
-
-                repeatCube_.rotation.x+=.01;
-                repeatCube_.rotation.y+=.01;
+                if(cube_) {
+                    cube_.rotation.x += .01;
+                    cube_.rotation.y += .01;
+                }
+                if(faceCube_) {
+                    faceCube_.rotation.x += .01;
+                    faceCube_.rotation.y += .01;
+                }
+                if(repeatCube_) {
+                    repeatCube_.rotation.x += .01;
+                    repeatCube_.rotation.y += .01;
+                }
 
             }
             three.enterframe=enterFrame_;
