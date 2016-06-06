@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Geometry Merge 合并</title>
+    <script src="../src/tools/liaohengfan/InitThree.js"></script>
+    <script src="../src/tools/libs/three.js"></script>
+    <script src="../src/tools/libs/jquery1.42.min.js"></script>
+
+    <style>
+        body{
+            padding: 0px;margin: 0px;
+            overflow-x: hidden;overflow-y: hidden;overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+<div id="webgl_div">
+    <canvas id="webgl_canvas"></canvas>
+</div>
+
+    <script>
+        (function() {
+
+            var three = new InitThree($("#webgl_canvas")[0], 1280, 720, 45, .1, 1000, true);
+            three.main_camera.position.set(3, 5, 5);
+            three.main_camera.lookAt(new THREE.Vector3(0, 0, 0));
+
+            //灯光
+            var light_=new THREE.PointLight(0xFFFFFF,1,1000,.1);
+            light_.position.set(5,5,3);
+            three.main_scene.add(light_);
+
+            var geo1=new THREE.CubeGeometry(5,1,1);
+            var geo2=new THREE.SphereGeometry(2,10,10);
+            geo1.merge(geo2);
+
+            var mesh=new THREE.Mesh(geo1,new THREE.MeshLambertMaterial({color:0xFF0000}));
+            three.main_scene.add(mesh);
+            three.render();
+        })();
+    </script>
+
+</body>
+</html>

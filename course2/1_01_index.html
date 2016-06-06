@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Three开发指南  Learn</title>
+    <script src="../src/tools/liaohengfan/InitThree.js"></script>
+    <script src="../src/tools/libs/three.js"></script>
+    <script src="../src/tools/libs/jquery1.42.min.js"></script>
+    <script src="../js/controls/OrbitControls.js"></script>
+
+    <style>
+        body{
+            padding: 0px;margin: 0px;
+            overflow-x: hidden;overflow-y: hidden;overflow: hidden;
+        }
+        #controls_div{
+            position: absolute; top: 0px; width: 100%;height:100%;
+        }
+    </style>
+</head>
+<body>
+<div id="controls_div"></div>
+<div id="webgl_div">
+    <canvas id="webgl_canvas"></canvas>
+</div>
+
+<script>
+    (function() {
+
+        var three = new InitThree($("#webgl_canvas")[0], 1280, 720, 45, .1, 1000, true);
+        three.main_camera.position.set(0, 3, 2);
+        three.main_camera.lookAt(new THREE.Vector3(0, 0, 0));
+
+        var controls_ = new THREE.OrbitControls(three.main_camera, $("#controls_div")[0]);
+
+        var axes_=new THREE.AxisHelper(100);
+        three.main_scene.add(axes_);
+
+        var ambient_=new THREE.AmbientLight(0xFFFFFF);
+        three.main_scene.add(ambient_);
+
+        var direct_=new THREE.DirectionalLight(0xFFFFFF);
+        three.main_scene.add(direct_);
+
+        var material_=new THREE.MeshPhongMaterial({color:0x666666});
+
+        var plane_=new THREE.Mesh(new THREE.PlaneGeometry(10,10),material_);
+        plane_.rotation.x=-(Math.PI/2);
+        three.main_scene.add(plane_);
+
+        var cube_=new THREE.Mesh(new THREE.CubeGeometry(2,2,2),material_);
+        cube_.position.y=2;
+        three.main_scene.add(cube_);
+
+
+        window.addEventListener( 'resize', onWindowResize, false );
+        function onWindowResize() {
+
+            three.main_camera.aspect = window.innerWidth / window.innerHeight;
+            three.main_camera.updateProjectionMatrix();
+
+            three.main_renderer.setSize( window.innerWidth, window.innerHeight );
+            $("#controls_div")[0].style.width=window.innerWidth;
+            $("#controls_div")[0].style.height=window.innerHeight;
+        }
+        onWindowResize();
+        three.render();
+
+    })();
+</script>
+</body>
+</html>

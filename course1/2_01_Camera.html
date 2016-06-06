@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>摄像机练习</title>
+    <script src="../src/tools/liaohengfan/InitThree.js"></script>
+    <script src="../src/tools/libs/three.js"></script>
+    <script src="../src/tools/libs/jquery1.42.min.js"></script>
+    <style>
+        body{
+            padding: 0px;margin: 0px;
+            overflow-x: hidden;overflow-y: hidden;overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+    <div id="webgl_holder">
+        <canvas id="webgl_canvas"></canvas>
+    </div>
+    <script>
+
+        (function(){
+
+            var main_scene,main_camera,main_renderer;
+            main_scene=new THREE.Scene();
+            main_renderer=new THREE.WebGLRenderer({canvas:$("#webgl_canvas")[0]});
+            main_renderer.setSize(550,400);
+            main_renderer.setClearColor(0x000000);
+            //main_camera=new THREE.PerspectiveCamera(45,55/40,.1,1000);//透视
+            main_camera=new THREE.OrthographicCamera(-2.75,2.75,-2,2);//正交
+
+            main_camera.position.set(4,3,5);
+            main_camera.lookAt(new THREE.Vector3(0,0,0));
+
+
+            var geo=new THREE.CubeGeometry(1,1,1);
+            var material=new THREE.MeshBasicMaterial({wireframe:true});
+            var mesh=new THREE.Mesh(geo,material);
+
+            main_scene.add(mesh);
+
+
+
+            function render(){
+
+                main_renderer.render(main_scene,main_camera);
+
+                requestAnimationFrame(render);
+            }
+
+            render();
+
+
+
+        })();
+
+
+
+    </script>
+
+</body>
+</html>

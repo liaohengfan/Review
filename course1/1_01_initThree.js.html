@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>复习Three.js</title>
+    <script src="../src/tools/liaohengfan/InitThree.js"></script>
+    <script src="../src/tools/libs/three.js"></script>
+    <script src="../src/tools/libs/jquery1.42.min.js"></script>
+
+    <style>
+        body{
+            padding: 0px;margin: 0px;
+            overflow-x: hidden;overflow-y: hidden;overflow: hidden;
+        }
+    </style>
+
+</head>
+<body>
+    <div id="webgl_holder">
+        <canvas id="webgl_canvas"></canvas>
+    </div>
+    <script>
+        var threeMain=new InitThree($("#webgl_canvas")[0],550,400,45,0.1,1000,false);
+        threeMain.main_camera.position.set(0,0,5);
+        threeMain.main_camera.lookAt(new THREE.Vector3(0,0,0));
+
+        var triGeo=new THREE.Geometry();
+        triGeo.vertices=[new THREE.Vector3(0,-1,0),new THREE.Vector3(-2,-1,0),new THREE.Vector3(-2,1,0)];
+        triGeo.faces.push(new THREE.Face3(0,2,1));
+        var triMesh=new THREE.Mesh(triGeo,new THREE.MeshBasicMaterial({color:0xFFFFFF}));
+        threeMain.main_scene.add(triMesh);
+
+        threeMain.render();
+
+    </script>
+
+</body>
+</html>

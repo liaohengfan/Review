@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="../src/tools/liaohengfan/InitThree.js"></script>
+    <script src="../src/tools/libs/three.js"></script>
+    <script src="../src/tools/libs/jquery1.42.min.js"></script>
+    <script src="../js/controls/OrbitControls.js"></script>
+
+    <script src="../js/loaders/ColladaLoader.js"></script>
+    <script src="../js/loaders/collada/Animation.js"></script>
+    <script src="../js/loaders/collada/AnimationHandler.js"></script>
+
+
+    <style>
+        body{
+            padding: 0px;margin: 0px;
+            overflow-x: hidden;overflow-y: hidden;overflow: hidden;
+        }
+        #controls_div{
+            position: absolute; top: 0px; width: 100%;height:100%;
+        }
+    </style>
+</head>
+<body>
+    <div id="controls_div"></div>
+    <div id="webgl_div">
+        <canvas id="webgl_canvas"></canvas>
+    </div>
+
+    <script>
+        (function(){
+
+            var three = new InitThree($("#webgl_canvas")[0], 1280, 720, 45, .1, 1000, true);
+            three.main_camera.position.set(0, 3, 2);
+            three.main_camera.lookAt(new THREE.Vector3(0, 0, 0));
+
+            var ambient_ = new THREE.AmbientLight(0xFFFFFF, 2);
+            three.main_scene.add(ambient_);
+
+            var controls_ = new THREE.OrbitControls(three.main_camera, $("#controls_div")[0]);
+
+            var imgLoader=new THREE.TextureLoader();
+            imgLoader.load("assest/models/lead/tianshi/dae/images/tianshinv.jpg",function(imgData) {
+                var load_ = new THREE.ColladaLoader();
+                load_.load("assest/models/lead/tianshi/dae/tsn_stand.dae", function (data_) {
+
+                    var child = data_.skins[0];
+                    child.rotation.y = -(Math.PI);
+                    child.rotation.z = -(Math.PI / 2);
+
+                    var material_ = new THREE.MeshLambertMaterial(0xFFFFFF);
+                    material_.side = THREE.DoubleSide;
+                    material_.skinning = true;
+                    material_.map=imgData;
+
+                    child.material=material_;
+
+                    var ani_ = new THREE.Animation(child, child.geometry.animation);
+                    ani_.play();
+
+                    three.main_scene.add(data_.scene);
+
+                    three.main_camera.lookAt(data_.scene.position);
+
+
+                });
+            });
+
+            var clock=new THREE.Clock();
+            var enterframe=function(){
+
+                THREE.AnimationHandler.update(clock.getDelta());
+            }
+
+
+
+            window.addEventListener( 'resize', onWindowResize, false );
+            function onWindowResize() {
+
+                three.main_camera.aspect = window.innerWidth / window.innerHeight;
+                three.main_camera.updateProjectionMatrix();
+
+                three.main_renderer.setSize( window.innerWidth, window.innerHeight );
+                $("#controls_div")[0].style.width=window.innerWidth;
+                $("#controls_div")[0].style.height=window.innerHeight;
+            }
+            onWindowResize();
+            three.enterframe=enterframe;
+            three.render();
+
+        })();
+    </script>
+</body>
+</html>

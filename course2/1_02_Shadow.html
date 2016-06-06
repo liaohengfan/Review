@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>阴影</title>
+    <script src="../src/tools/liaohengfan/InitThree.js"></script>
+    <script src="../src/tools/libs/three.js"></script>
+    <script src="../src/tools/libs/jquery1.42.min.js"></script>
+    <script src="../js/controls/OrbitControls.js"></script>
+
+    <style>
+        body{
+            padding: 0px;margin: 0px;
+            overflow-x: hidden;overflow-y: hidden;overflow: hidden;
+        }
+        #controls_div{
+            position: absolute; top: 0px; width: 100%;height:100%;
+        }
+    </style>
+</head>
+<body>
+<div id="controls_div"></div>
+<div id="webgl_div">
+    <canvas id="webgl_canvas"></canvas>
+</div>
+
+<script>
+    (function() {
+
+        var three = new InitThree($("#webgl_canvas")[0], 1280, 720, 45, .1, 1000, true);
+        three.main_camera.position.set(0, 3, 2);
+        three.main_camera.lookAt(new THREE.Vector3(0, 0, 0));
+
+        three.main_renderer.shadowMapEnabled = true;
+        three.main_renderer.shadowMapSoft = true;
+
+        var controls_ = new THREE.OrbitControls(three.main_camera, $("#controls_div")[0]);
+        /*
+        var spotLight_=new THREE.SpotLight(0xFFFFFF,.6,100,Math.PI/4);
+        spotLight_.castShadow=true;
+        spotLight_.position.set(4,3,4);
+        spotLight_.lookAt(new THREE.Vector3(0,0,0));
+
+        three.main_scene.add(spotLight_);
+        */
+
+        var direct_=new THREE.DirectionalLight(0xFFFFFF);
+        direct_.castShadow=true;
+        direct_.position.set(4,3,4);
+        three.main_scene.add(direct_);
+
+        var material_=new THREE.MeshLambertMaterial({color:0xFFFF00});
+
+        var plane_=new THREE.Mesh(new THREE.PlaneGeometry(8,8,100,100),material_);
+        plane_.receiveShadow=true;
+        plane_.rotation.x=-(Math.PI/2);
+        three.main_scene.add(plane_);
+
+        var meshMaterial_=new THREE.MeshLambertMaterial({color:0xFFFFFF});
+
+        var cube_=new THREE.Mesh(new THREE.CubeGeometry(1,1,1),meshMaterial_);
+        cube_.castShadow=true;
+        cube_.position.y=1;
+        three.main_scene.add(cube_);
+
+        var sphere_=new THREE.Mesh(new THREE.SphereGeometry(1,40,40),meshMaterial_);
+        sphere_.position.set(2,1,0);
+        sphere_.castShadow=true;
+        three.main_scene.add(sphere_);
+
+
+        var hemiLight_=new THREE.HemisphereLight(0xFFFFFF,0xFFFF00,.6);
+        hemiLight_.position.set(0,20,0);
+        three.main_scene.add(hemiLight_);
+
+
+        var textureflare0=THREE.ImageUtils.loadTexture();
+        var textureflare3=THREE.ImageUtils.loadTexture("../assest/texture/lensflare/lensflare3.png");
+        var flareColor=new THREE.Color(0xFFaacc);
+        var lensflare=new THREE.LensFlare(textureflare0,20,0.0,THREE.AdditiveBlending,flareColor);
+        lensflare.add(textureflare3,60,0.6,THREE.AdditiveBlending);
+        lensflare.add(textureflare3,70,0.7,THREE.AdditiveBlending);
+        lensflare.add(textureflare3,120,0.9,THREE.AdditiveBlending);
+        lensflare.add(textureflare3,70,1.0,THREE.AdditiveBlending);
+        //lensflare.position.copy(spotLight_.position);
+
+        lensflare.position.set(30, 10, -50);
+
+        three.main_scene.add(lensflare);
+
+
+
+        window.addEventListener( 'resize', onWindowResize, false );
+        function onWindowResize() {
+
+            three.main_camera.aspect = window.innerWidth / window.innerHeight;
+            three.main_camera.updateProjectionMatrix();
+
+            three.main_renderer.setSize( window.innerWidth, window.innerHeight );
+            $("#controls_div")[0].style.width=window.innerWidth;
+            $("#controls_div")[0].style.height=window.innerHeight;
+        }
+        onWindowResize();
+        three.render();
+
+    })();
+</script>
+</body>
+</html>

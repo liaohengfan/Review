@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>材质练习</title>
+    <script src="../src/tools/liaohengfan/InitThree.js"></script>
+    <script src="../src/tools/libs/three.js"></script>
+    <script src="../src/tools/libs/jquery1.42.min.js"></script>
+
+    <style>
+        body{
+            padding: 0px;margin: 0px;
+            overflow-x: hidden;overflow-y: hidden;overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+    <div id="webgl_div">
+        <canvas id="webgl_canvas"></canvas>
+    </div>
+
+    <script>
+        (function(){
+
+            var three=new InitThree($("#webgl_canvas")[0],1280,720,45,.1,1000,true);
+            three.main_camera.position.set(5,5,5);
+            three.main_camera.lookAt(new THREE.Vector3(5,0,0));
+
+            function getCube(material_){
+                var tempGeo_=new THREE.CubeGeometry(1,1,1);
+
+                return new THREE.Mesh(tempGeo_,material_);
+            }
+
+            //灯光
+            var light=new THREE.PointLight(0xFFFFFF,1,10,.1);
+            light.position.set(5,5,3);
+            three.main_scene.add(light);
+
+            //基础材质
+            var baseMaterial=new THREE.MeshBasicMaterial({color:0xFF0000});
+            three.main_scene.add(getCube(baseMaterial));
+
+            //Lambert材质
+            //                                                 {反射光, 自发光}
+            var lambertMaterial=new THREE.MeshLambertMaterial({color:0xFF0000,emissive:0x00FF00});
+            var lambertMesh=getCube(lambertMaterial);
+            lambertMesh.position.set(1.5,0,0);
+            three.main_scene.add(lambertMesh);
+
+            //Phong材质
+            //                                                 {光照反应,镜面反射,光斑,}
+            var phongMaterial=new THREE.MeshPhongMaterial({color:0xFF0000,specular:0xFFFF00,refractionRatio:0.95,shininess:150});
+            var phongMesh=new THREE.Mesh(new THREE.SphereGeometry(.5,30,30),phongMaterial);
+            phongMesh.position.set(3,0,0);
+            three.main_scene.add(phongMesh);
+
+            //normal材质  法向材质
+            var normalMaterial=new THREE.MeshNormalMaterial();
+            var normalMesh=getCube(normalMaterial);
+            normalMesh.position.set(4.5,0,0);
+            three.main_scene.add(normalMesh);
+
+
+
+
+            three.render();
+
+
+
+
+
+        })();
+    </script>
+
+</body>
+</html>

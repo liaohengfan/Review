@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Raycaster Test</title>
+    <script src="../src/tools/liaohengfan/InitThree.js"></script>
+    <script src="../src/tools/libs/three.js"></script>
+    <script src="../src/tools/libs/jquery1.42.min.js"></script>
+    <script src="../js/renderers/Projector.js"></script>
+
+    <style>
+        body{
+            padding: 0px;margin: 0px;
+            overflow-x: hidden;overflow-y: hidden;overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+    <div id="webgl_div">
+        <canvas id="webgl_canvas"></canvas>
+    </div>
+
+    <script>
+        (function() {
+
+            var three = new InitThree($("#webgl_canvas")[0], 1280, 720, 45, .1, 1000, true);
+            three.main_camera.position.set(3, 5, 5);
+            three.main_camera.lookAt(new THREE.Vector3(3, 0, 0));
+
+            var noneObjs=[];
+            var geo_=new THREE.CubeGeometry(1,1,1);
+            var material_=new THREE.MeshBasicMaterial({color:0xFFFF00});
+            function createCube(){
+
+                for(var i=0;i<6;i++) {
+
+                    var mesh = new THREE.Mesh(geo_, material_);
+                    mesh.position.set(i *1.5,0,0);
+                    var noneMesh = mesh.clone();
+                    noneObjs.push(noneMesh);
+                    noneMesh.matrixWorldNeedsUpdate=true;
+                    noneMesh.position.set(i *1.5,0,0);
+                    noneMesh.updateMatrixWorld();
+
+                    three.main_scene.add(mesh);
+                }
+
+
+
+            }
+
+            createCube();
+            three.render();
+
+            var projector = new THREE.Projector();
+
+            document.addEventListener("click",onDocumentMouseDown);
+            //利用投射检测鼠标点击的物体
+            function onDocumentMouseDown( event ) {
+                event.preventDefault();
+                var vector = new THREE.Vector3(( event.clientX / 1280 ) * 2 - 1, -( event.clientY / 720 ) * 2 + 1, 0.5);
+                projector.unprojectVector(vector, three.main_camera);
+                var raycaster = new THREE.Raycaster(three.main_camera.position, vector.sub(three.main_camera.position).normalize());
+                var intersects = raycaster.intersectObjects(noneObjs);
+
+                if (intersects.length > 0) {
+                    intersects[0].object;
+                }
+            }
+
+
+        })();
+    </script>
+</body>
+</html>

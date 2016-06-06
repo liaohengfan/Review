@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Shader Material</title>
+    <script src="../src/tools/liaohengfan/InitThree.js"></script>
+    <script src="../src/tools/libs/three.js"></script>
+    <script src="../src/tools/libs/jquery1.42.min.js"></script>
+    <script src="../js/controls/OrbitControls.js"></script>
+
+    <style>
+        body{
+            padding: 0px;margin: 0px;
+            overflow-x: hidden;overflow-y: hidden;overflow: hidden;
+        }
+        #controls_div{
+            position: absolute; top: 0px; width: 100%;height:100%;
+        }
+    </style>
+</head>
+<body>
+<div id="controls_div"></div>
+<div id="webgl_div">
+    <canvas id="webgl_canvas"></canvas>
+</div>
+<script id="vertex-shader" type="x-shader/x-vertex">
+
+    varying vec2 vUv;
+    void main()
+    {
+        vUv=uv;
+        gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);
+    }
+
+</script>
+
+<script id="fragment-shader" type="x-shader/x-fragment">
+    varying vec2 vUv;
+    uniform float r;
+    uniform float g;
+    uniform float b;
+    void main()
+    {
+        gl_FragColor=vec4(r,g,b,1.0);
+    }
+</script>
+
+<script>
+    (function() {
+
+        var three = new InitThree($("#webgl_canvas")[0], 1280, 720, 45, .1, 1000, true);
+        three.main_camera.position.set(0, 3, 2);
+        three.main_camera.lookAt(new THREE.Vector3(0, 10, 0));
+
+        three.main_renderer.shadowMapEnabled = true;
+        three.main_renderer.shadowMapSoft = true;
+
+        var controls_ = new THREE.OrbitControls(three.main_camera, $("#controls_div")[0]);
+
+
+        var vertex_=$("#vertex-shader")[0].innerHTML;
+        var frag_=$("#fragment-shader")[0].innerHTML;
+
+        var uniforms={
+            r:{type:'f',value:0.01},
+            g:{type:'f',value:0.01},
+            b:{type:'f',value:0.01}
+        }
+
+        var material=new THREE.ShaderMaterial({
+            uniforms:uniforms,
+            vertexShader:vertex_,
+            fragmentShader:frag_
+        });
+
+        var mesh=new THREE.Mesh(new THREE.PlaneGeometry(1,1),material);
+        three.main_scene.add(mesh);
+
+        function enterframe_(){
+
+            material.uniforms.r.value=Math.random();
+            material.uniforms.g.value=Math.random();
+            material.uniforms.b.value=Math.random();
+        }
+
+        three.enterframe=enterframe_;
+
+        window.addEventListener( 'resize', onWindowResize, false );
+        function onWindowResize() {
+
+            three.main_camera.aspect = window.innerWidth / window.innerHeight;
+            three.main_camera.updateProjectionMatrix();
+
+            three.main_renderer.setSize( window.innerWidth, window.innerHeight );
+            $("#controls_div")[0].style.width=window.innerWidth;
+            $("#controls_div")[0].style.height=window.innerHeight;
+        }
+        onWindowResize();
+        three.render();
+
+    })();
+</script>
+</body>
+</html>
